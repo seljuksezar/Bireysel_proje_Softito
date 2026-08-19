@@ -1,0 +1,42 @@
+# BGL Failure Prediction Config
+data:
+  raw_path: "data/BGL.log"          # raw BGL log file
+  parsed_path: "data/parsed.csv"    # output of drain parsing
+  seq_path: "data/sequences.npz"    # sliding-window sequences
+
+parse:
+  # Drain parameters
+  similarity_threshold: 0.5         # similarity between log and template (st)
+  depth: 4                          # tree depth
+  max_children: 100                 # max child nodes per node
+  max_log_len: 128                  # max tokens per message
+  keep_message_words: 100           # rare words to keep in templates
+
+window:
+  window_seconds: 600           # window size (1 hour)
+  step_seconds: 300              # non-overlapping windows
+  horizon_seconds: 600             # predict failure in next horizon
+  max_seq_len: 30                  # max events per window sequence
+  min_events_per_window: 3        # drop windows with fewer events
+
+model:
+  embedding_dim: 100
+  hidden_dim: 256
+  num_layers: 2
+  num_heads: 4
+  mlp_dim: 128
+  vocab_size: 5001
+  num_classes: 2
+  dropout: 0.3
+  attention_type: "multi_head"           # "multi_head" or "mean"
+
+train:
+  epochs: 50
+  batch_size: 128
+  lr: 0.0001
+  weight_decay: 0.0001
+  seed: 42
+  val_ratio: 0.2
+  test_ratio: 0.2
+  patience: 10                      # early stopping
+  device: "auto"                    # auto / cuda / mps / cpu
